@@ -1,9 +1,11 @@
 <template>
-  <div class='container'>user</div>
+  <div class='container'>User</div>
 </template>
 
 <script>
-export default {}
+export default {
+  name: 'user-index'
+}
 </script>
 
 <style scoped lang='less'></style>

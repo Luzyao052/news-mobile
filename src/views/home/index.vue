@@ -3,7 +3,9 @@
 </template>
 
 <script>
-export default {}
+export default {
+  name: 'home-index'
+}
 </script>
 
 <style scoped lang='less'></style>
