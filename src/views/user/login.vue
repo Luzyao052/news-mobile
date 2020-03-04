@@ -37,21 +37,43 @@
         round：圆边效果
         block：块级样式设置，占据一行
       -->
-      <van-button type="info" size="small" round block>登录</van-button>
+      <van-button type="info" size="small" round block @click="login">登录</van-button>
     </div>
   </div>
 </template>
 
 <script>
+import { apiUserLogin } from '@/api/user'
 export default {
   name: 'user-login',
   data () {
     return {
       // 登录表单数据对象
       loginForm: {
-        mobile: '',
-        code: ''
+        mobile: '13911111111',
+        code: '246810'
       }
+    }
+  },
+  methods: {
+    async login () {
+      try {
+        // apiUserLogin函数执行有可能成功、也有可能失败，请try、catch判断使用
+        const res = await apiUserLogin(this.loginForm)
+        // api函数执行成功代表账号正确
+        // 如果报400的错误信息，代表账号错误，并且是致命错误，会阻止后续程序代码运行
+        // 因此，判断账号是否正确，不用通过result返回值，需要try/catch介入
+        // console.log(result) // {token:xx,refresh_token:xx}
+        // 通过vuex维护服务器端返回的token等秘钥信息
+        this.$store.commit('updateUser', res)
+      } catch (e) {
+        // 账号错误，$toast.fail()是vant组件库的"错误提示"应用语法
+        // 与之前的 $message.error()是对应的
+        // return 表示停止后续代码执行
+        return this.$toast.fail('用户名或密码错误' + e)
+      }
+      this.$toast.success('登录成功')
+      this.$router.push('/') // 项目首页面
     }
   }
 }

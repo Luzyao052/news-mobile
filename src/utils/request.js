@@ -90,5 +90,20 @@ instance.interceptors.response.use(function (response) {
   return Promise.reject(error)
 })
 
+// ES6模块化 导出一个函数，名称为 createAPI
+export const createAPI = (url, method, data) => {
+  const config = {}
+  if (method === 'get') {
+    config.params = data
+  } else {
+    config.data = data
+  }
+  return instance({
+    url,
+    method,
+    ...config
+  })
+}
+
 // 对外导出axios对象
 export default instance
