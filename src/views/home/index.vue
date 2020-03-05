@@ -1,13 +1,7 @@
 <template>
   <div class="container">
     <van-tabs v-model="activeChannelIndex">
-      <van-tab title="推荐">
-        <com-article></com-article>
-      </van-tab>
-      <van-tab title="数据库">
-        <com-article></com-article>
-      </van-tab>
-      <van-tab title="后端">
+      <van-tab :title="item.name" v-for="item in channelList" :key="item.id">
         <com-article></com-article>
       </van-tab>
     </van-tabs>
@@ -15,6 +9,9 @@
 </template>
 
 <script>
+// 导入频道api
+import { apiUserChannel } from '@/api/channel.js'
+// 对com-article.vue 做导入、注册、使用
 import ComArticle from './components/com-article.vue'
 export default {
   name: 'home-index',
@@ -23,7 +20,18 @@ export default {
   },
   data () {
     return {
-      activeChannelIndex: 0
+      activeChannelIndex: 0, // 激活频道下标标志
+      channelList: [] // 用户频道列表
+    }
+  },
+  created () {
+    this.getChannelList() // 频道
+  },
+  methods: {
+    // 获取频道
+    async getChannelList () {
+      const res = await apiUserChannel()
+      this.channelList = res.channels
     }
   }
 }
