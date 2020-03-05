@@ -13,7 +13,8 @@ import 'amfe-flexible/index.min.js'
 // 导入全局样式控制文件
 // 注意：在vant的css样式导入之后设置
 import '@/assets/css/global.less'
-
+// 导入规则注册文件，其不是模块，不用起名字接收，本质就是引入执行而已
+import '@/utils/validate.js'
 // vant的注册
 // 本质：全局方式注册了n多的组件和全局成员
 //       Vue.component(xx,function(){})
