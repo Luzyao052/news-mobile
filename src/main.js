@@ -22,7 +22,19 @@ import '@/utils/validate.js'
 //       Vue.prototype.xxx = yyy
 //       ……
 Vue.use(Vant)
-
+// 设置一个全局延迟器，是Vue的继承成员，名称为$sleep，就是"自定义"的
+// 使得组件可以调用： this.$sleep() ,开始要做延迟执行
+// time形参，表示等待时间，毫秒
+Vue.prototype.$sleep = (time) => {
+  // Promise对象返回：应用端可以介入await，这样异步过程变为同步过程，可以保证当前代码没有执行完毕，
+  // 后续代码不要执行
+  return new Promise((resolve) => {
+    setTimeout(() => {
+      // resolve()是空执行，打酱油的
+      resolve()
+    }, time)
+  })
+}
 Vue.config.productionTip = false
 new Vue({
   router,
