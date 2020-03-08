@@ -14,10 +14,12 @@
             <van-grid :border="false" :column-num="item.cover.type" v-if="item.cover.type>0">
               <van-grid-item v-for="(val,index) in item.cover.images" :key="index">
                 <!-- lazy-load设置图片懒加载，是一个自定义指令 -->
-                <van-image width="85" height="85" :src="val" lazy-load/>
+                <van-image width="85" height="85" :src="val" lazy-load />
               </van-grid-item>
             </van-grid>
             <p>
+              <!-- 右侧叉号 -->
+              <van-icon name="close" style="float:right;" @click="displayDialog()" />
               <span>作者:{{item.aut_name}}</span>
               &nbsp;
               <span>评论 :{{item.comm_count}}</span>
@@ -29,10 +31,14 @@
         </van-cell>
       </van-list>
     </van-pull-refresh>
+    <!-- 弹出框 -->
+    <my-dislog v-model="showDialog"></my-dislog>
   </div>
 </template>
 
 <script>
+// 导入弹出框
+import MyDislog from './com-moreaction.vue'
 // 导入文章api函数
 import { apiArticleList } from '@/api/article.js'
 export default {
@@ -44,8 +50,12 @@ export default {
       required: true
     }
   },
+  components: {
+    MyDislog
+  },
   data () {
     return {
+      showDialog: false, // 控制子组件弹出框是否显示
       articleList: [], // 文章列表
       // 请求文章对象
       reqArticles: {
@@ -65,6 +75,10 @@ export default {
     this.getArticleList() // 文章
   },
   methods: {
+    // 弹出框
+    displayDialog () {
+      this.showDialog = true
+    },
     // 获取文章
     async getArticleList () {
       const res = await apiArticleList(this.reqArticles)
