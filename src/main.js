@@ -4,7 +4,7 @@ import router from './router'
 import store from './store'
 
 // vant导入
-import Vant from 'vant'
+import Vant, { Lazyload } from 'vant'
 // vant的样式导入
 import 'vant/lib/index.css'
 // rem适配基准值 相关依赖包导入
@@ -15,6 +15,8 @@ import 'amfe-flexible/index.min.js'
 import '@/assets/css/global.less'
 // 导入规则注册文件，其不是模块，不用起名字接收，本质就是引入执行而已
 import '@/utils/validate.js'
+// 导入全局过滤器
+import * as filters from '@/utils/filters.js' // global filters
 // vant的注册
 // 本质：全局方式注册了n多的组件和全局成员
 //       Vue.component(xx,function(){})
@@ -22,6 +24,7 @@ import '@/utils/validate.js'
 //       Vue.prototype.xxx = yyy
 //       ……
 Vue.use(Vant)
+Vue.use(Lazyload)
 // 设置一个全局延迟器，是Vue的继承成员，名称为$sleep，就是"自定义"的
 // 使得组件可以调用： this.$sleep() ,开始要做延迟执行
 // time形参，表示等待时间，毫秒
@@ -35,6 +38,12 @@ Vue.prototype.$sleep = (time) => {
     }, time)
   })
 }
+// 过滤器
+// Object.keys() 获得对象的全部成员名称,以数组返回
+Object.keys(filters).forEach(key => {
+  Vue.filter(key, filters[key])
+})
+
 Vue.config.productionTip = false
 new Vue({
   router,

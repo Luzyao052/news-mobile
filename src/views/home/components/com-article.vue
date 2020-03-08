@@ -13,7 +13,8 @@
           <template slot="label">
             <van-grid :border="false" :column-num="item.cover.type" v-if="item.cover.type>0">
               <van-grid-item v-for="(val,index) in item.cover.images" :key="index">
-                <van-image width="85" height="85" :src="val" />
+                <!-- lazy-load设置图片懒加载，是一个自定义指令 -->
+                <van-image width="85" height="85" :src="val" lazy-load/>
               </van-grid-item>
             </van-grid>
             <p>
@@ -21,7 +22,7 @@
               &nbsp;
               <span>评论 :{{item.comm_count}}</span>
               &nbsp;
-              <span>时间:{{item.pubdate}}</span>
+              <span>时间:{{item.pubdate | formatTime}}</span>
               &nbsp;
             </p>
           </template>
