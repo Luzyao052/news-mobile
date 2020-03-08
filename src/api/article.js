@@ -16,3 +16,6 @@ import { createAPI } from '@/utils/request.js'
  * 参数下边有红色波浪线，不用理会，eslint推荐变量名称使用小驼峰风格
  */
 export const apiArticleList = data => createAPI('app/v1_1/articles', 'get', data)
+
+// 对文章不喜欢
+export const apiArticleDislike = data => createAPI('app/v1_0/article/dislikes', 'post', data)

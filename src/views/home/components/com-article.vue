@@ -19,7 +19,11 @@
             </van-grid>
             <p>
               <!-- 右侧叉号 -->
-              <van-icon name="close" style="float:right;" @click="displayDialog()" />
+              <van-icon
+                name="close"
+                style="float:right;"
+                @click="displayDialog(item.art_id.toString())"
+              />
               <span>作者:{{item.aut_name}}</span>
               &nbsp;
               <span>评论 :{{item.comm_count}}</span>
@@ -32,7 +36,7 @@
       </van-list>
     </van-pull-refresh>
     <!-- 弹出框 -->
-    <my-dislog v-model="showDialog"></my-dislog>
+    <my-dislog v-model="showDialog" :articlID="nowArticleID" @dislikeSuccess="handleDislikeSuccess"></my-dislog>
   </div>
 </template>
 
@@ -55,6 +59,7 @@ export default {
   },
   data () {
     return {
+      nowArticleID: '', // 1. 不感兴趣文章id
       showDialog: false, // 控制子组件弹出框是否显示
       articleList: [], // 文章列表
       // 请求文章对象
@@ -75,9 +80,24 @@ export default {
     this.getArticleList() // 文章
   },
   methods: {
+    // 处理不喜欢的文章
+    handleDislikeSuccess () {
+      // 让 nowArticleID 文章在列表中消失
+      // 1. 获得目标文章id在文章列表中的下标序号
+      //    findIndex()是数组的一个方法，可以通过条件获得指定目标在数组列表中的"下标序号"，有遍历机制
+      // 各种底层方法api：https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Guide
+      const index = this.articleList.findIndex(item => {
+        // 满足条件就return为true信息出来，那么当前项目的下标序号就获得的到了
+        return item.art_id.toString() === this.nowArticleID
+      })
+      // 2. 通过下标序号从列表中删除指定的文章
+      // 数组.splice(下标, 长度)
+      this.articleList.splice(index, 1)
+    },
     // 弹出框
-    displayDialog () {
+    displayDialog (artId) {
       this.showDialog = true
+      this.nowArticleID = artId
     },
     // 获取文章
     async getArticleList () {
