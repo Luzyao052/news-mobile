@@ -2,7 +2,12 @@
   <!-- div的作用是给瀑布流区域设置“垂直滚动条”，使得可以进行上拉操作 -->
   <div class="scroll-wrapper">
     <!-- 下拉包围上拉 -->
-    <van-pull-refresh v-model="isLoading" @refresh="onRefresh">
+    <van-pull-refresh
+      v-model="isLoading"
+      @refresh="onRefresh"
+      :success-text="successText"
+      animation-duration="1500"
+    >
       <van-list v-model="loading" :finished="finished" finished-text="没有更多了" @load="onLoad">
         <!-- van-cell单元格组件
         特点：独占一行
@@ -59,6 +64,7 @@ export default {
   },
   data () {
     return {
+      successText: '', // 下拉动作完成后的动画提示内容
       nowArticleID: '', // 1. 不感兴趣文章id
       showDialog: false, // 控制子组件弹出框是否显示
       articleList: [], // 文章列表
@@ -107,12 +113,17 @@ export default {
       // console.log(res)
     },
     // 下拉执行的动作
-    onRefresh () {
-      setTimeout(() => {
-        this.onLoad() // 调用上拉获得数据
-        this.isLoading = false // 下拉加载完成/结束加载动画
-        this.$toast.success('刷新成功') // 成功提示
-      }, 1000)
+    async onRefresh () {
+      await this.$sleep(800)
+      const articles = await this.getArticleList()
+      if (articles.results.length > 0) {
+        this.articleList.unshift(...articles.results)
+        this.reqArticles.timestamp = articles.pre_timestamp
+        this.successText = '文章更新成功'
+      } else {
+        this.successText = '已经是最新的文章'
+      }
+      this.isLoading = false
     },
     // 瀑布流上拉执行的动作
     async onLoad () {
