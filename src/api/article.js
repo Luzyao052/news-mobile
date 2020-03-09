@@ -19,3 +19,6 @@ export const apiArticleList = data => createAPI('app/v1_1/articles', 'get', data
 
 // 对文章不喜欢
 export const apiArticleDislike = data => createAPI('app/v1_0/article/dislikes', 'post', data)
+
+// 举报文章
+export const apiArticleReport = data => createAPI('/app/v1_0/article/reports', 'post', data)
