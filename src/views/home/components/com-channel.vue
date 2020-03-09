@@ -35,9 +35,9 @@
         </div>
       </div>
       <van-grid class="channel-content" :gutter="10" clickable>
-        <van-grid-item v-for="value in 8" :key="value">
+        <van-grid-item v-for="item in restChannel" :key="item.id">
           <div class="info">
-            <span class="text">文字</span>
+            <span class="text">{{item.name}}</span>
           </div>
         </van-grid-item>
       </van-grid>
@@ -46,6 +46,8 @@
 </template>
 
 <script>
+// 导入api
+import { apiChannelAll } from '@/api/channel'
 export default {
   name: 'com-channel',
   props: {
@@ -54,12 +56,46 @@ export default {
       default: false
     },
     channelList: {
+      // 我的频道
       type: Array,
       default: () => []
     },
     activeChannelIndex: {
       type: Number,
       default: 0
+    }
+  },
+  data () {
+    return {
+      channelAll: [] // 全部频道数据
+    }
+  },
+  created () {
+    this.getChannelAll()
+  },
+  methods: {
+    // 全部文章
+    async getChannelAll () {
+      const res = await apiChannelAll()
+      // console.log(res)
+      this.channelAll = res.channels
+    }
+  },
+  computed: {
+    // 获取剩余频道
+    restChannel () {
+      const userChannelIDs = this.channelList.map(item => {
+        return item.id
+      })
+      //    数组.filter()  过滤方法，把符合条件的数组元素通过“新数组”给与返回
+      //    (全部频道 去除 我的频道 给与返回)
+      const rest = this.channelAll.filter(item => {
+        // 我的频道  里边不包含当前项目，就给与收集
+        // 判断我的频道id集合 是否包含当前项目，不包含的才收集
+        // 数组.includes(元素)  判断数组中是否有出现某个元素，返回Boolean
+        return !userChannelIDs.includes(item.id)
+      })
+      return rest
     }
   }
 }
