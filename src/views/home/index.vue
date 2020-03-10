@@ -44,6 +44,7 @@ export default {
     // 获取频道
     async getChannelList () {
       const res = await apiUserChannel()
+      // console.log(res)
       this.channelList = res.channels
     }
   }

@@ -37,3 +37,28 @@ export const apiUserChannel = async (data) => {
 
 // 获取全部频道
 export const apiChannelAll = data => createAPI('/app/v1_0/channels', 'get', data)
+
+// 添加频道
+export const apiChannelAdd = async (data) => {
+  const key = store.state.user.token ? CHANNEL_KET_VIP : CHANNEL_KEY_TRAVEL
+  const cacheChannels = JSON.parse(localStorage.getItem(key))
+  cacheChannels.push(data)
+  localStorage.setItem(key, JSON.stringify(cacheChannels))
+  // 上述代码都是非常ok的，本身不需要返回任何信息(应用端也不需要)，就返回null即可
+  return null
+}
+
+// 删除频道
+export const apiChannelDel = async (data) => {
+  const key = store.state.user.token ? CHANNEL_KET_VIP : CHANNEL_KEY_TRAVEL
+  const cacheChannels = JSON.parse(localStorage.getItem(key))
+  // cacheChannels.splice(index, 1)
+  const tmpChannels = cacheChannels.filter(item => {
+    // item: 代表遍历出来的每个数组元素单元
+    // 判断当前项目如果“不是” channel 就收集,
+    // 内部return接收true就收集当前数值元素项目，接收false就抛弃
+    return data.id !== item.id
+  })
+  localStorage.setItem(key, JSON.stringify(tmpChannels))
+  return null
+}

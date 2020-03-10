@@ -7,6 +7,7 @@
     round
     position="bottom"
     :style="{ height: '95%' }"
+    @closed="isEdit=false"
   >
     <div class="channel">
       <div class="channel-head">
@@ -15,14 +16,16 @@
           <span class="desc">点击进入频道</span>
         </div>
         <div>
-          <van-button type="danger" plain size="mini" round>编辑</van-button>
+          <van-button type="danger" plain size="mini" round @click="isEdit=!isEdit">
+            {{isEdit?'完成':'编辑'}}
+          </van-button>
         </div>
       </div>
       <!--van-grid 没有设置column-num属性，默认是4列-->
       <van-grid class="channel-content" :gutter="10" clickable>
         <van-grid-item v-for="(item,index) in channelList" :key="item.id">
           <span class="text" :style="{color:activeChannelIndex===index?'red':''}">{{item.name}}</span>
-          <!-- <van-icon class="close-icon" name="close" /> -->
+          <van-icon class="close-icon" name="close" v-show="isEdit && index>0" @click="userToRest(item,index)" />
         </van-grid-item>
       </van-grid>
     </div>
@@ -35,7 +38,7 @@
         </div>
       </div>
       <van-grid class="channel-content" :gutter="10" clickable>
-        <van-grid-item v-for="item in restChannel" :key="item.id">
+        <van-grid-item v-for="item in restChannel" :key="item.id" @click="restToUser(item)">
           <div class="info">
             <span class="text">{{item.name}}</span>
           </div>
@@ -47,7 +50,7 @@
 
 <script>
 // 导入api
-import { apiChannelAll } from '@/api/channel'
+import { apiChannelAll, apiChannelAdd, apiChannelDel } from '@/api/channel'
 export default {
   name: 'com-channel',
   props: {
@@ -67,6 +70,7 @@ export default {
   },
   data () {
     return {
+      isEdit: false, // 是否进入编辑状态 true/false
       channelAll: [] // 全部频道数据
     }
   },
@@ -74,6 +78,16 @@ export default {
     this.getChannelAll()
   },
   methods: {
+    // 删除频道到全部频道
+    userToRest (channel, index) {
+      this.channelList.splice(index, 1)
+      apiChannelDel(channel)
+    },
+    // 添加频道到我的频道
+    restToUser (channel) {
+      this.channelList.push(channel)
+      apiChannelAdd(channel)
+    },
     // 全部文章
     async getChannelAll () {
       const res = await apiChannelAll()
