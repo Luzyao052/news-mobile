@@ -7,7 +7,9 @@
     <van-nav-bar title="搜索中心" left-arrow @click-left="$router.back()" />
     <van-search v-model.trim="searchText" placeholder="请输入搜索关键词" @input="serachChange" />
     <van-cell-group>
-      <van-cell :title="item" icon="search" v-for="(item,i) in suggestionList" :key="i"></van-cell>
+      <van-cell icon="search" v-for="(item,i) in suggestionList" :key="i">
+        <div slot="title" v-html="highLightCell(item,searchText)"></div>
+      </van-cell>
     </van-cell-group>
   </div>
 </template>
@@ -23,6 +25,22 @@ export default {
     }
   },
   methods: {
+    // 高亮显示
+    highLightCell (content, keywords) {
+      const reg = new RegExp(keywords, 'i') // 正则
+      const ret = content.match(reg) // 匹配内容 （对象、null）
+      // console.log(rst) // ["vue", index: 0, input: "vue本地项目获s", groups: undefined]
+      // 结论：
+      // rst[0]： 就是从目标内容中匹配到关键字信息【重点】
+      // rst['index']：关键字出现的下标位置
+      // rst['input']：代表完整的目标内容
+      // 如果没有高亮，返回原内容
+      if (ret === null) {
+        return content
+      }
+      // 对目标内容的关键字做替换
+      return content.replace(reg, `<span style="color:red">${ret[0]}</span>`)
+    },
     serachChange (val) {
       // 这个默认参数是vant 事件自带的
       // 该监听器每次进来的时候，首先清除 this.timer（就是setTimeout停止）定时器
