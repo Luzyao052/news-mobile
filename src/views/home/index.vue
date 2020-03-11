@@ -12,7 +12,7 @@
     <com-channel
       v-model="showPopup"
       :channelList="channelList"
-      :activeChannelIndex="activeChannelIndex"
+      :activeChannelIndex.sync="activeChannelIndex"
     ></com-channel>
   </div>
 </template>

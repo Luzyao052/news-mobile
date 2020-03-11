@@ -23,7 +23,7 @@
       </div>
       <!--van-grid 没有设置column-num属性，默认是4列-->
       <van-grid class="channel-content" :gutter="10" clickable>
-        <van-grid-item v-for="(item,index) in channelList" :key="item.id">
+        <van-grid-item v-for="(item,index) in channelList" :key="item.id" @click="clkChannel(item,index)">
           <span class="text" :style="{color:activeChannelIndex===index?'red':''}">{{item.name}}</span>
           <van-icon class="close-icon" name="close" v-show="isEdit && index>0" @click="userToRest(item,index)" />
         </van-grid-item>
@@ -78,10 +78,23 @@ export default {
     this.getChannelAll()
   },
   methods: {
+    // 频道跳转
+    clkChannel (channel, index) {
+      // 如果是编辑状态，并且不是推荐项目，就执行删除逻辑
+      if (this.isEdit && index > 0) {
+        return this.userToRest(channel, index)
+      }
+      this.$emit('input', false)
+      this.$emit('update:activeChannelIndex', index)
+    },
     // 删除频道到全部频道
     userToRest (channel, index) {
       this.channelList.splice(index, 1)
       apiChannelDel(channel)
+      // 前置激活
+      if (index === this.channelList.length && index === this.activeChannelIndex) {
+        this.$emit('update:activeChannelIndex', index - 1)
+      }
     },
     // 添加频道到我的频道
     restToUser (channel) {
