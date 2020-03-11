@@ -113,7 +113,7 @@ export default {
       }
     },
     // 添加频道到我的频道
-    restToUser (channel, index) {
+    restToUser (channel) {
       this.channelList.push(channel)
       // console.log(channel)
       const channels = [{ id: channel.id, seq: this.channelList.length }]
