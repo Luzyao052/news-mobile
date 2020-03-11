@@ -10,7 +10,71 @@ const CHANNEL_KET_VIP = 'hm-channel-vip' // 登录用户Key
  * 应用端明确要求如下函数返回"Promise对象"结果
  * 给函数前边设置async，那么这个函数return返回结果以"Promise对象"形式体现
  */
+
 // 获取用户频道列表
+export const apiUserChannel = async (data) => {
+  // 1. 从缓存localStorage里边获得频道(注意区分用户是否有登录系统)
+  // 根据用户是否登录系统获得对应的localStorage操作的key
+  const key = store.state.user.token ? CHANNEL_KET_VIP : CHANNEL_KEY_TRAVEL
+  // 未登录，本地没有，发请求获取 存储
+  // 未登录， 本地有，获取
+  // 登录， 发请求
+  const cacheChannels = localStorage.getItem(key) // 本地
+  // console.log(cacheChannels)
+  if (!store.state.user.token && !cacheChannels) {
+    const res = await createAPI('app/v1_0/user/channels', 'get', data)
+    // console.log(res)
+    localStorage.setItem(key, JSON.stringify(res.channels))
+    return res
+  }
+  if (!store.state.user.token && cacheChannels) {
+    // console.log(cacheChannels)
+    return { channels: JSON.parse(cacheChannels) }
+  }
+  if (store.state.user.token) {
+    const res = await createAPI('app/v1_0/user/channels', 'get', data)
+    // localStorage.setItem(key, JSON.stringify(res.channels))
+    return res
+  }
+}
+
+// 获取全部频道
+export const apiChannelAll = data => createAPI('/app/v1_0/channels', 'get', data)
+
+// 添加频道
+export const apiChannelAdd = async (data, channel) => {
+  const key = store.state.user.token ? CHANNEL_KET_VIP : CHANNEL_KEY_TRAVEL
+  if (store.state.user.token) {
+    return createAPI('/app/v1_0/user/channels', 'patch', data)
+  } else { // 没有token,即未登录，所以操作本地
+    const cacheChannels = JSON.parse(localStorage.getItem(key)) // 本地
+    cacheChannels.push(channel)
+    localStorage.setItem(key, JSON.stringify(cacheChannels))
+    return null
+  }
+}
+
+// 删除频道
+export const apiChannelDel = async (data) => {
+  if (store.state.user.token) {
+    return createAPI(`/app/v1_0/user/channels/${data.id}`, 'delete', data)
+  } else { // 没有token，即未登录，所以操作本地
+    const key = store.state.user.token ? CHANNEL_KET_VIP : CHANNEL_KEY_TRAVEL
+    const cacheChannels = JSON.parse(localStorage.getItem(key))
+    // cacheChannels.splice(index, 1)
+    const tmpChannels = cacheChannels.filter(item => {
+      // item: 代表遍历出来的每个数组元素单元
+      // 判断当前项目如果“不是” channel 就收集,
+      // 内部return接收true就收集当前数值元素项目，接收false就抛弃
+      return data.id !== item.id
+    })
+    localStorage.setItem(key, JSON.stringify(tmpChannels))
+    return null
+  }
+}
+
+// 只有本地存储的代码。（大注释，从头注释到尾，解开是请注意 76-128）
+/* // 获取用户频道列表
 export const apiUserChannel = async (data) => {
   // 1. 从缓存localStorage里边获得频道(注意区分用户是否有登录系统)
   // 根据用户是否登录系统获得对应的localStorage操作的key
@@ -61,4 +125,4 @@ export const apiChannelDel = async (data) => {
   })
   localStorage.setItem(key, JSON.stringify(tmpChannels))
   return null
-}
+} */

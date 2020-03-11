@@ -16,16 +16,29 @@
           <span class="desc">点击进入频道</span>
         </div>
         <div>
-          <van-button type="danger" plain size="mini" round @click="isEdit=!isEdit">
-            {{isEdit?'完成':'编辑'}}
-          </van-button>
+          <van-button
+            type="danger"
+            plain
+            size="mini"
+            round
+            @click="isEdit=!isEdit"
+          >{{isEdit?'完成':'编辑'}}</van-button>
         </div>
       </div>
       <!--van-grid 没有设置column-num属性，默认是4列-->
       <van-grid class="channel-content" :gutter="10" clickable>
-        <van-grid-item v-for="(item,index) in channelList" :key="item.id" @click="clkChannel(item,index)">
+        <van-grid-item
+          v-for="(item,index) in channelList"
+          :key="item.id"
+          @click="clkChannel(item,index)"
+        >
           <span class="text" :style="{color:activeChannelIndex===index?'red':''}">{{item.name}}</span>
-          <van-icon class="close-icon" name="close" v-show="isEdit && index>0" @click="userToRest(item,index)" />
+          <van-icon
+            class="close-icon"
+            name="close"
+            v-show="isEdit && index>0"
+            @click="userToRest(item,index)"
+          />
         </van-grid-item>
       </van-grid>
     </div>
@@ -92,14 +105,19 @@ export default {
       this.channelList.splice(index, 1)
       apiChannelDel(channel)
       // 前置激活
-      if (index === this.channelList.length && index === this.activeChannelIndex) {
+      if (
+        index === this.channelList.length &&
+        index === this.activeChannelIndex
+      ) {
         this.$emit('update:activeChannelIndex', index - 1)
       }
     },
     // 添加频道到我的频道
-    restToUser (channel) {
+    restToUser (channel, index) {
       this.channelList.push(channel)
-      apiChannelAdd(channel)
+      // console.log(channel)
+      const channels = [{ id: channel.id, seq: this.channelList.length }]
+      apiChannelAdd({ channels }, channel)
     },
     // 全部文章
     async getChannelAll () {
