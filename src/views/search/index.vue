@@ -36,7 +36,7 @@
         </div>
       </van-cell>
         <!-- 历史联想项目数据展示 -->
-        <van-cell title="hello111">
+        <van-cell :title="item" v-for="(item,index) in suggestHistories" :key="index">
           <van-icon v-show="isDeleteData" slot="right-icon" name="close" style="line-height:inherit"></van-icon>
         </van-cell>
     </van-cell-group>
@@ -45,10 +45,14 @@
 
 <script>
 import { apiSearchSuggestion } from '@/api/search.js'
+// 设置关键字历史记录的localStorage的key的名称，方便后续使用
+const SH = 'suggest-histories'
 export default {
   name: 'search-index',
   data () {
     return {
+      // 联想历史记录
+      suggestHistories: JSON.parse(localStorage.getItem(SH) || '[]'),
       isDeleteData: false, // 联想历史记录是否进入删除状态
       searchText: '',
       suggestionList: [] // 联想建议数据
@@ -57,6 +61,13 @@ export default {
   methods: {
     // 点击搜索
     onSearch (kw) {
+      if (!kw) {
+        return false
+      }
+      const st = new Set(this.suggestHistories)
+      st.add(kw)
+      this.suggestHistories = Array.from(st)
+      localStorage.setItem(SH, JSON.stringify(this.suggestHistories))
       this.$router.push('/search/result/' + kw)
     },
     // 高亮显示
