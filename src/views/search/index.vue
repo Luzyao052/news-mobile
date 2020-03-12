@@ -1,5 +1,5 @@
 <template>
-  <div class="container">
+  <van-cell class="container">
     <!-- 自己的导航栏
     left-arrow：左侧有箭头
     @click-left：单击左侧箭头的事件处理
@@ -31,25 +31,27 @@
           style="line-height:inherit"
         ></van-icon>
         <div slot="default" v-show="isDeleteData">
-          <span style="margin-right:10px">全部删除</span>
+          <span style="margin-right:10px" @click="suggestDelAll()">全部删除</span>
           <span @click="isDeleteData=!isDeleteData">完成</span>
         </div>
       </van-cell>
       <!-- 历史联想项目数据展示
-      v-for="(item,index) in $store.state.user.token?historyList:suggestHistories" -->
-      <van-cell
-        :title="item"
-        v-for="(item,index) in historyList"
-        :key="index"
-      >
-        <van-icon v-show="isDeleteData" slot="right-icon" name="close" style="line-height:inherit"></van-icon>
+      v-for="(item,index) in $store.state.user.token?historyList:suggestHistories"-->
+      <van-cell :title="item" v-for="(item,index) in historyList" :key="index">
+        <van-icon
+          v-show="isDeleteData"
+          slot="right-icon"
+          name="close"
+          style="line-height:inherit"
+          @click="suggestDel(index)"
+        ></van-icon>
       </van-cell>
     </van-cell-group>
-  </div>
+  </van-cell>
 </template>
 
 <script>
-import { apiSearchSuggestion, apiSearchHistory } from '@/api/search.js'
+import { apiSearchSuggestion, apiSearchHistory, apiSearchHistoryDel } from '@/api/search.js'
 // 设置关键字历史记录的localStorage的key的名称，方便后续使用
 const key = 'suggest-histories'
 export default {
@@ -68,10 +70,30 @@ export default {
     this.getHistory()
   },
   methods: {
+    // 删除全部的历史记录
+    async suggestDelAll () {
+      // 1. 页面级，响应式效果
+      this.historyList = []
+      // 2. 持久级
+      await apiSearchHistoryDel()
+    },
+    // 删除单独的历史记录
+    suggestDel (index) {
+      // 因为没有单独删的接口 只能判断是否本地进行删除
+      if (this.$store.state.user.token) {
+        // 页面级，假删除
+        this.historyList.splice(index, 1)
+      } else {
+        // 1. 页面级，响应式效果
+        this.historyList.splice(index, 1)
+        // 2. 持久级localStorage
+        localStorage.setItem(key, JSON.stringify(this.historyList))
+      }
+    },
     // 获取历史记录
     async getHistory () {
       const res = await apiSearchHistory()
-      console.log(res)
+      // console.log(res)
       this.historyList = res
     },
     // 点击搜索
@@ -79,7 +101,7 @@ export default {
       if (!kw) {
         return false
       }
-      // 避免的是登录账号添加历史纪录时，也会存储到本地
+      // 避免的是登录账号添加搜索的历史纪录时，也会存储到本地
       if (!this.$store.state.user.token) {
         const sh = new Set(this.historyList)
         sh.add(kw)
