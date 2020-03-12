@@ -35,39 +35,51 @@
           <span @click="isDeleteData=!isDeleteData">完成</span>
         </div>
       </van-cell>
-        <!-- 历史联想项目数据展示 -->
-        <van-cell :title="item" v-for="(item,index) in suggestHistories" :key="index">
-          <van-icon v-show="isDeleteData" slot="right-icon" name="close" style="line-height:inherit"></van-icon>
-        </van-cell>
+      <!-- 历史联想项目数据展示
+      v-for="(item,index) in $store.state.user.token?historyList:suggestHistories" -->
+      <van-cell
+        :title="item"
+        v-for="(item,index) in historyList"
+        :key="index"
+      >
+        <van-icon v-show="isDeleteData" slot="right-icon" name="close" style="line-height:inherit"></van-icon>
+      </van-cell>
     </van-cell-group>
   </div>
 </template>
 
 <script>
-import { apiSearchSuggestion } from '@/api/search.js'
+import { apiSearchSuggestion, apiSearchHistory } from '@/api/search.js'
 // 设置关键字历史记录的localStorage的key的名称，方便后续使用
-const SH = 'suggest-histories'
+// const SH = 'suggest-histories'
 export default {
   name: 'search-index',
   data () {
     return {
       // 联想历史记录
-      suggestHistories: JSON.parse(localStorage.getItem(SH) || '[]'),
+      // suggestHistories: JSON.parse(localStorage.getItem(SH) || '[]'),
+      historyList: [],
       isDeleteData: false, // 联想历史记录是否进入删除状态
       searchText: '',
       suggestionList: [] // 联想建议数据
     }
   },
+  created () {
+    this.getHistory()
+  },
   methods: {
+    // 获取历史记录
+    async getHistory () {
+      const res = await apiSearchHistory()
+      // console.log(res)
+      this.historyList = res
+    },
     // 点击搜索
-    onSearch (kw) {
+    async onSearch (kw) {
       if (!kw) {
         return false
       }
-      const st = new Set(this.suggestHistories)
-      st.add(kw)
-      this.suggestHistories = Array.from(st)
-      localStorage.setItem(SH, JSON.stringify(this.suggestHistories))
+      // 跳转
       this.$router.push('/search/result/' + kw)
     },
     // 高亮显示
