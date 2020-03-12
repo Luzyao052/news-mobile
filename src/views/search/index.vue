@@ -5,9 +5,17 @@
     @click-left：单击左侧箭头的事件处理
     -->
     <van-nav-bar title="搜索中心" left-arrow @click-left="$router.back()" />
-    <van-search v-model.trim="searchText" placeholder="请输入搜索关键词" @input="serachChange" />
+    <van-search
+      v-model.trim="searchText"
+      placeholder="请输入搜索关键词"
+      @input="serachChange"
+      @search="onSearch(searchText)"
+    />
     <van-cell-group>
-      <van-cell icon="search" v-for="(item,i) in suggestionList" :key="i">
+      <!-- 联想关键字列表 -->
+      <van-cell icon="search" v-for="(item,i) in suggestionList" :key="i" @click="onSearch(item)">
+        <!-- 因为要应用methods方法，并且该方法返回的信息里边有 html标签+css样式
+        所以不要直接使用title属性，相反要应用命名插槽，内部结合v-html应用-->
         <div slot="title" v-html="highLightCell(item,searchText)"></div>
       </van-cell>
     </van-cell-group>
@@ -25,6 +33,10 @@ export default {
     }
   },
   methods: {
+    // 点击搜索
+    onSearch (kw) {
+      this.$router.push('/search/result/' + kw)
+    },
     // 高亮显示
     highLightCell (content, keywords) {
       const reg = new RegExp(keywords, 'i') // 正则
