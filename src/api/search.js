@@ -10,16 +10,29 @@ export const apiSearchList = data => createAPI('/app/v1_0/search', 'get', data)
 export const apiSearchHistory = async (data) => {
   const key = 'suggest-histories'
   if (store.state.user.token) {
-    const res = await createAPI('/app/v1_0/search/histories', 'get')
+    const res = await createAPI('/app/v1_0/search/histories', 'get', data)
     // console.log(res)
     return res.keywords
   } else {
     const searchHistory = JSON.parse(localStorage.getItem(key) || '[]')
+    return searchHistory
     // 把当前的关键字存储起来，还要考虑去除重复
-    const sh = new Set(searchHistory)
-    sh.add(data)
-    const searchHistoryList = Array.from(sh)
-    localStorage.setItem(key, JSON.stringify(searchHistoryList))
-    return searchHistoryList
+    // const sh = new Set(searchHistory)
+    // sh.add(data)
+    // const searchHistoryList = Array.from(sh)
+    // return searchHistoryList
+    // localStorage.setItem(key, JSON.stringify(searchHistoryList))
+    // const searchHistoryLists = JSON.parse(searchHistoryList)
+    // return searchHistoryLists
+  }
+}
+
+// 删除用户搜索历史
+export const apiSearchHistoryDel = data => {
+  const key = 'suggest-histories'
+  if (store.state.user.token) {
+    return createAPI('/app/v1_0/search/histories', 'delete')
+  } else {
+    localStorage.removeItem(key)
   }
 }

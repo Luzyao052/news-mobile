@@ -51,7 +51,7 @@
 <script>
 import { apiSearchSuggestion, apiSearchHistory } from '@/api/search.js'
 // 设置关键字历史记录的localStorage的key的名称，方便后续使用
-// const SH = 'suggest-histories'
+const key = 'suggest-histories'
 export default {
   name: 'search-index',
   data () {
@@ -71,13 +71,20 @@ export default {
     // 获取历史记录
     async getHistory () {
       const res = await apiSearchHistory()
-      // console.log(res)
+      console.log(res)
       this.historyList = res
     },
     // 点击搜索
     async onSearch (kw) {
       if (!kw) {
         return false
+      }
+      // 避免的是登录账号添加历史纪录时，也会存储到本地
+      if (!this.$store.state.user.token) {
+        const sh = new Set(this.historyList)
+        sh.add(kw)
+        const searchHistoryList = Array.from(sh)
+        localStorage.setItem(key, JSON.stringify(searchHistoryList))
       }
       // 跳转
       this.$router.push('/search/result/' + kw)
