@@ -4,8 +4,8 @@
     <!--具体布局内容-->
     <div class="user-profile">
       <div class="info">
-        <van-image round src="https://img.yzcdn.cn/vant/cat.jpeg"/>
-        <h3 class="name">我是华仔
+        <van-image round :src="userInfo.photo"/>
+        <h3 class="name">{{userInfo.name}}
           <br>
           <van-tag size="mini">申请认证</van-tag>
         </h3>
@@ -18,19 +18,19 @@
       -->
       <van-row>
         <van-col span="6">
-          <p>0</p>
+          <p>{{userInfo.art_count}}</p>
           <p>动态</p>
         </van-col>
         <van-col span="6">
-          <p>0</p>
+          <p>{{userInfo.follow_count}}</p>
           <p>关注</p>
         </van-col>
         <van-col span="6">
-          <p>0</p>
+          <p>{{userInfo.fans_count}}</p>
           <p>粉丝</p>
         </van-col>
         <van-col span="6">
-          <p>0</p>
+          <p>{{userInfo.like_count}}</p>
           <p>被赞</p>
         </van-col>
       </van-row>
@@ -57,8 +57,26 @@
 </template>
 
 <script>
+// 用户基本信息api
+import { apiUserInfo } from '@/api/user.js'
 export default {
-  name: 'user-index'
+  name: 'user-index',
+  data () {
+    return {
+      userInfo: {} // 用户信息
+    }
+  },
+  created () {
+    this.getUserInfo()
+  },
+  methods: {
+    // 获取用户信息
+    async getUserInfo () {
+      const res = await apiUserInfo()
+      // console.log(res)
+      this.userInfo = res
+    }
+  }
 }
 </script>
 

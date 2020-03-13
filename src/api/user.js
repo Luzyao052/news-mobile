@@ -12,3 +12,6 @@ export const apiUserFollow = data => createAPI('/app/v1_0/user/followings', 'pos
 
 // 取消关注
 export const apiUserUnfollow = data => createAPI(`/app/v1_0/user/followings/${data}`, 'delete')
+
+// 获取用户信息
+export const apiUserInfo = data => createAPI('/app/v1_0/user', 'get', data)
