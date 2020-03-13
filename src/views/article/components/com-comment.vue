@@ -25,7 +25,9 @@
           <p>
             <span>{{item.pubdate | formatTime}}</span>
             ·
-            <span @click="showReply=true">{{item.reply_count}}&nbsp;回复</span>
+            <span
+              @click="openReply(item.com_id.toString())"
+            >{{item.reply_count}}&nbsp;回复</span>
           </p>
         </div>
       </van-cell>
@@ -39,18 +41,38 @@
         finished-text="没有更多了"
         @load="onLoadReply"
       >
-        <van-cell v-for="item in reply.list" :key="item" :title="item" />
+        <van-cell v-for="item in replyList" :key="item.com_id.toString()">
+          <!-- 作者头像 -->
+          <div slot="icon">
+            <img class="avatar" :src="item.aut_photo" alt />
+          </div>
+          <!-- 作者名称 -->
+          <div slot="title">
+            <span>{{item.aut_name}}</span>
+          </div>
+          <!-- 回复内容和时间 -->
+          <div slot="label">
+            <p>{{item.content}}</p>
+            <p>
+              <span>{{item.pubdate | formatTime}}</span>
+            </p>
+          </div>
+        </van-cell>
       </van-list>
     </van-popup>
   </div>
 </template>
 
 <script>
-// 评论api
-import { apiCommentList } from '@/api/article.js'
+// 评论api 回复api
+import { apiCommentList, apiReplyList } from '@/api/article.js'
 export default {
   data () {
     return {
+      // 回复相关
+      commentID: '', // 被单击激活的评论
+      lastID: null, // 分页标志(null、前一次返回的last_id)
+      replyList: [], // 回复列表
       // 回复瀑布相关成员，通过reply成员包围，使得与外部的评论瀑布成员没有冲突
       reply: {
         list: [],
@@ -67,22 +89,30 @@ export default {
   },
   methods: {
     // 对评论回复的瀑布流
-    onLoadReply () {
-      // 异步更新数据
-      // setTimeout 仅做示例，真实场景中一般为 ajax 请求
-      setTimeout(() => {
-        for (let i = 0; i < 10; i++) {
-          this.reply.list.push(this.reply.list.length + 1)
-        }
-
-        // 加载状态结束
-        this.reply.loading = false
-
-        // 数据全部加载完成
-        if (this.reply.list.length >= 40) {
-          this.reply.finished = true
-        }
-      }, 1000)
+    async onLoadReply () {
+      await this.$sleep(800)
+      // 获得对评论回复的传擦
+      const obj = {
+        type: 'c',
+        source: this.commentID, // 评论id
+        offset: this.lastID,
+        limit: 10
+      }
+      const res = await apiReplyList(obj)
+      console.log(res)
+      if (res.results.length) {
+        this.replyList.push(...res.results)
+        this.lastID = res.last_id // 维护分页偏移量
+      } else {
+        this.reply.finished = true
+      }
+      // 瀑布加载动画消失
+      this.reply.loading = false
+    },
+    // 点击评论回复
+    openReply (commentID) {
+      this.commentID = commentID
+      this.showReply = true // 展开弹出层
     },
     // 评论瀑布流
     async onLoad () {

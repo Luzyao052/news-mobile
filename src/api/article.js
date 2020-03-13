@@ -28,3 +28,6 @@ export const apiArticleDetail = data => createAPI(`/app/v1_0/articles/${data}`, 
 
 // 获取文章评论
 export const apiCommentList = data => createAPI('/app/v1_0/comments', 'get', data)
+
+// 获取文章评论的回复
+export const apiReplyList = data => createAPI('/app/v1_0/comments', 'get', data)
