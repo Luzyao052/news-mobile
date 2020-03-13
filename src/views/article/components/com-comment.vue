@@ -60,34 +60,94 @@
         </van-cell>
       </van-list>
     </van-popup>
+    <!-- 添加评论或回复的小构件 -->
+    <div class="reply-container van-hairline--top">
+      <van-field v-model.trim="contentCorR" placeholder="写评论或回复...">
+        <!-- slot="button"命名插槽，表明要给van-field的指定位置填充内容，button是输入框的右侧-->
+        <van-button
+          size="mini"
+          :loading="submitting"
+          loading-type="spinner"
+          slot="button"
+          @click="add"
+        >提交</van-button>
+      </van-field>
+    </div>
   </div>
 </template>
 
 <script>
+// 添加评论或回复
+import { apiAddCorR } from '@/api/reply.js'
 // 评论api 回复api
 import { apiCommentList, apiReplyList } from '@/api/article.js'
 export default {
   data () {
     return {
+      // 添加评论或回复成员
+      contentCorR: '', // 内容
+      submitting: false, // 是否正在提交
       // 回复相关
-      commentID: '', // 被单击激活的评论
+      commentID: '', // 被单击激活的评论ID
       lastID: null, // 分页标志(null、前一次返回的last_id)
       replyList: [], // 回复列表
       // 回复瀑布相关成员，通过reply成员包围，使得与外部的评论瀑布成员没有冲突
       reply: {
-        list: [],
         loading: false, // 瀑布动画
         finished: false // 瀑布停止标志
       },
-      showReply: false,
+      showReply: false, // 弹出层
       commentList: [], // 评论列表
       offset: null, // 评论分页标志
-      list: [],
       loading: false,
       finished: false
     }
   },
   methods: {
+    // 添加评论或回复
+    async add () {
+      // 空的数据不给与处理
+      if (!this.contentCorR) {
+        this.$toast.fail('请输入一些内容！')
+        return false
+      }
+      this.submitting = true
+      // 判断是回复或评论
+      if (this.showReply) {
+        // 回复
+        const obj = {
+          target: this.commentID,
+          content: this.contentCorR,
+          art_id: this.$route.params.aid
+        }
+        const res = await apiAddCorR(obj)
+        this.replyList.unshift(res.new_obj)
+        this.$toast.success('发布成功')
+        // 找到目标评论，对reply_count做累加
+        // findIndex()遍历数组，根据条件找到某个元素的下标
+        const index = this.commentList.findIndex(item => {
+          // item:代表每个数组元素
+          // 条件是：item.com_id.toString()===this.commentID
+          return item.com_id.toString() === this.commentID
+        })
+        // 通过index找到目标评论，对reply_count做累加
+        this.commentList[index].reply_count++
+      } else {
+        // 评论
+        const req = {
+          target: this.$route.params.aid,
+          content: this.contentCorR,
+          art_id: null
+        }
+        const result = await apiAddCorR(req)
+        this.commentList.unshift(result.new_obj)
+        this.$toast.success('发布成功')
+      }
+      // 清除添加的表单域信息
+      this.contentCorR = ''
+      // 恢复按钮为正常状态
+      this.submitting = false
+    },
     // 对评论回复的瀑布流
     async onLoadReply () {
       await this.$sleep(800)
@@ -99,7 +159,7 @@ export default {
         limit: 10
       }
       const res = await apiReplyList(obj)
-      console.log(res)
+      // console.log(res)
       if (res.results.length) {
         this.replyList.push(...res.results)
         this.lastID = res.last_id // 维护分页偏移量
@@ -152,6 +212,16 @@ export default {
     .van-cell__label {
       width: 400px;
     }
+  }
+  // 添加评论或回复构件
+  .reply-container {
+    position: fixed;
+    left: 0;
+    bottom: 0;
+    height: 88px;
+    width: 100%;
+    background: #f5f5f5;
+    z-index: 9999;
   }
 }
 </style>
