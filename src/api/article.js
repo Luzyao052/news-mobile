@@ -22,3 +22,6 @@ export const apiArticleDislike = data => createAPI('app/v1_0/article/dislikes', 
 
 // 举报文章
 export const apiArticleReport = data => createAPI('/app/v1_0/article/reports', 'post', data)
+
+// 获取文章详情
+export const apiArticleDetail = data => createAPI(`/app/v1_0/articles/${data}`, 'get')

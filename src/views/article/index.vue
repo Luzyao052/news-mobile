@@ -2,24 +2,24 @@
   <div class="container">
     <van-nav-bar fixed left-arrow @click-left="$router.back()" title="文章详情"></van-nav-bar>
     <div class="detail">
-      <h3 class="title">美女与野兽</h3>
+      <h3 class="title">{{article.title}}</h3>
       <div class="author">
         <van-image
           round
           width="1rem"
           height="1rem"
           fit="fill"
-          src="https://img.yzcdn.cn/vant/cat.jpeg"
+          :src="article.aut_photo"
         />
         <div class="text">
-          <p class="name">一阵清风</p>
-          <p class="time">两周内</p>
+          <p class="name">{{article.aut_name}}</p>
+          <p class="time">{{article.pubdate | formatTime}}</p>
         </div>
-        <van-button round size="small" type="info">+ 关注</van-button>
+        <van-button round size="small" type="info">{{article.is_followed?'取消关注':'+ 关注'}}</van-button>
       </div>
       <!--  -->
       <div class="content">
-        <p>文章内容文章内容文章内容</p>
+        <p v-html="article.content"></p>
       </div>
       <div class="zan">
         <van-button
@@ -37,8 +37,25 @@
 </template>
 
 <script>
+import { apiArticleDetail } from '@/api/article.js'
 export default {
-  name: 'article'
+  name: 'article-index',
+  data () {
+    return {
+      article: {} // 目标文章详情信息
+    }
+  },
+  created () {
+    this.getArticleDetail()
+  },
+  methods: {
+    async getArticleDetail () {
+      const articleId = this.$route.params.aid
+      const res = await apiArticleDetail(articleId)
+      // console.log(res)
+      this.article = res
+    }
+  }
 }
 </script>
 
