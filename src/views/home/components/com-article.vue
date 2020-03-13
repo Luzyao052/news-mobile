@@ -14,7 +14,12 @@
         用法非常灵活、复杂
         title：单元格标题内容
         -->
-        <van-cell v-for="item in articleList" :key="item.art_id.toString()" :title="item.title">
+        <van-cell
+          v-for="item in articleList"
+          :key="item.art_id.toString()"
+          :title="item.title"
+          @click="$router.push('/article/'+item.art_id.toString())"
+        >
           <template slot="label">
             <van-grid :border="false" :column-num="item.cover.type" v-if="item.cover.type>0">
               <van-grid-item v-for="(val,index) in item.cover.images" :key="index">
