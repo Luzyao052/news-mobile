@@ -32,17 +32,22 @@
         >点赞</van-button>
         <van-button round size="small" plain icon="delete">不喜欢</van-button>
       </div>
+      <!-- 评论区 -->
+      <com-comment></com-comment>
     </div>
   </div>
 </template>
 
 <script>
+// 导入子组件
+import ComComment from './components/com-comment'
 // 关注与取消关注api
 import { apiUserFollow, apiUserUnfollow } from '@/api/user.js'
 // 获取文章详情api
 import { apiArticleDetail } from '@/api/article.js'
 export default {
   name: 'article-index',
+  components: { ComComment },
   data () {
     return {
       article: {}, // 目标文章详情信息
