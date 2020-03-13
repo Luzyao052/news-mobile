@@ -8,9 +8,9 @@
     fixed：固定定位，定位到页面头部，是样式体现(postion:fixed;top:0;left:0;)
     -->
     <van-nav-bar fixed title="黑马头条" right-text="搜索"
-      @click-right="$router.push('/search')"/>
+      @click-right="$router.push('/search')" v-if="$route.path!=='/user'"/>
 
-    <div class="my-wrapper" >
+    <div class="my-wrapper" :class="{noTop:$route.path==='/user'}">
       <!--路由占位符，用于显示 home、question、video、user的组件的-->
       <router-view></router-view>
     </div>
@@ -26,13 +26,18 @@
       <van-tabbar-item to="/home" icon="home-o">首页</van-tabbar-item>
       <van-tabbar-item to="/question"  icon="chat-o">问答</van-tabbar-item>
       <van-tabbar-item to="/video"  icon="video-o">视频</van-tabbar-item>
-      <van-tabbar-item to="/user"  icon="user-o">我的</van-tabbar-item>
+      <van-tabbar-item :to="$store.state.user.token?'/user':'/login'"  icon="user-o">
+    {{$store.state.user.token?'我的':'未登录'}}
+  </van-tabbar-item>
     </van-tabbar>
   </div>
 </template>
 
 <script>
 export default {
+  created () {
+    // console.log(this.$route) --> 可以打印出来path
+  }
 }
 </script>
 
