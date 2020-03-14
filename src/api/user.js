@@ -15,3 +15,10 @@ export const apiUserUnfollow = data => createAPI(`/app/v1_0/user/followings/${da
 
 // 获取用户信息
 export const apiUserInfo = data => createAPI('/app/v1_0/user', 'get', data)
+
+// 获取用户个人资料-编辑资料的api
+/**
+ * 编辑资料：获得用户的资料信息，用于修改
+ * 内部自动传递token，可以识别当前的用户
+ */
+export const apiUserProfile = data => createAPI('/app/v1_0/user/profile', 'get', data)

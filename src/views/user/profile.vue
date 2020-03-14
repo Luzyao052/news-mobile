@@ -16,20 +16,34 @@
           fit="cover"
           width="50"
           height="50"
-          src="https://img.yzcdn.cn/vant/cat.jpeg"
+          :src="userprofile.photo"
         />
       </van-cell>
-      <van-cell title="名称" is-link value="蜡笔大新"></van-cell>
-      <van-cell title="性别" is-link value="女"></van-cell>
-      <van-cell title="生日" is-link value="2018-03-09"></van-cell>
+      <van-cell title="名称" is-link :value="userprofile.name"></van-cell>
+      <van-cell title="性别" is-link :value="userprofile.gender===0?'男':'女'"></van-cell>
+      <van-cell title="生日" is-link :value="userprofile.birthday"></van-cell>
     </van-cell-group>
   </div>
 </template>
 
 <script>
+import { apiUserProfile } from '@/api/user.js'
 export default {
   name: 'user-profile',
+  data () {
+    return {
+      userprofile: {}
+    }
+  },
+  created () {
+    this.getUserProfile()
+  },
   methods: {
+    async getUserProfile () {
+      const res = await apiUserProfile()
+      // console.log(res)
+      this.userprofile = res
+    },
     save () {
       // 提示信息
       this.$toast.success('保存成功')
