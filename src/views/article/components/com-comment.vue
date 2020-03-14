@@ -136,8 +136,7 @@ export default {
         // 评论
         const req = {
           target: this.$route.params.aid,
-          content: this.contentCorR,
-          art_id: null
+          content: this.contentCorR
         }
         const result = await apiAddCorR(req)
         this.commentList.unshift(result.new_obj)
@@ -173,6 +172,11 @@ export default {
     openReply (commentID) {
       this.commentID = commentID
       this.showReply = true // 展开弹出层
+
+      // 每次打开回复弹出层都要做初始化操作，把之前旧的"痕迹"都清除，使得新的回复信息得以展示
+      this.replyList = [] // 旧的回复数据清除
+      this.reply.finished = false // 激活瀑布
+      this.lastID = null // 恢复分页偏移量
     },
     // 评论瀑布流
     async onLoad () {
