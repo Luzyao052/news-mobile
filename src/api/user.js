@@ -22,3 +22,6 @@ export const apiUserInfo = data => createAPI('/app/v1_0/user', 'get', data)
  * 内部自动传递token，可以识别当前的用户
  */
 export const apiUserProfile = data => createAPI('/app/v1_0/user/profile', 'get', data)
+
+// 修改用户头像
+export const apiUserPhoto = data => createAPI('/app/v1_0/user/photo', 'patch', data)

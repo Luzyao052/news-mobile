@@ -19,6 +19,14 @@
           :src="userprofile.photo"
         />
       </van-cell>
+      <!-- 隐藏状态的上传表单域
+        ref：可以这样 this.$refs.mypic  方式获得到当前input的元素对象
+        如果不通过ref，也可以通过其他方式获取，
+        例如id  document.getElementById('pic')
+        ref和id 方式获得的元素对象本质完全一样
+        上传表单域自带click，不用声明
+      -->
+      <input type="file" ref="mypic" id="pic" @change="startUpload()" style="display:none;" />
       <van-cell title="名称" is-link :value="userprofile.name" @click="showName=true"></van-cell>
       <van-cell title="性别" is-link :value="userprofile.gender===0?'男':'女'" @click="showSex=true"></van-cell>
       <van-cell title="生日" is-link :value="userprofile.birthday" @click="showBirthday=true"></van-cell>
@@ -27,7 +35,7 @@
         高度不配置，通过内容自动填充
     -->
     <van-popup v-model="showPhoto" position="bottom">
-      <van-cell title="本地相册选择图片" is-link></van-cell>
+      <van-cell title="本地相册选择图片" is-link @click="$refs.mypic.click()"></van-cell>
       <van-cell title="拍照" is-link></van-cell>
     </van-popup>
     <!-- 名称弹出层
@@ -58,7 +66,7 @@
 
 <script>
 import dayjs from 'dayjs'
-import { apiUserProfile } from '@/api/user.js'
+import { apiUserProfile, apiUserPhoto } from '@/api/user.js'
 export default {
   name: 'user-profile',
   data () {
@@ -79,6 +87,24 @@ export default {
     this.getUserProfile()
   },
   methods: {
+    // 修改头像
+    async startUpload () {
+      // console.dir(this.$refs.mypic)
+      // 1. 获得上传好的图片对象
+      const fobj = this.$refs.mypic.files[0]
+      // 2. 把图片对象 整合到FormData
+      const fd = new FormData()
+      // fd整合fobj，调用append方法，不断给自己添加信息
+      fd.append('photo', fobj) // photo 是接口文章要求的参数名称
+      // 3. 把FormData给到api函数，提交给服务器端
+      const res = await apiUserPhoto(fd)
+      // console.log(res)
+      this.userprofile.photo = res.photo
+      // 关闭弹出
+      this.showPhoto = false
+      // 成功提示
+      this.$toast.success('头像更新成功！')
+    },
     // 日期
     onConfirm (val) {
       // console.log(val)
