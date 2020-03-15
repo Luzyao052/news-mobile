@@ -25,3 +25,6 @@ export const apiUserProfile = data => createAPI('/app/v1_0/user/profile', 'get',
 
 // 修改用户头像
 export const apiUserPhoto = data => createAPI('/app/v1_0/user/photo', 'patch', data)
+
+// 修改用户资料
+export const apiUserSaveProfile = data => createAPI('/app/v1_0/user/profile', 'patch', data)

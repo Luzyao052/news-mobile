@@ -66,7 +66,7 @@
 
 <script>
 import dayjs from 'dayjs'
-import { apiUserProfile, apiUserPhoto } from '@/api/user.js'
+import { apiUserProfile, apiUserPhoto, apiUserSaveProfile } from '@/api/user.js'
 export default {
   name: 'user-profile',
   data () {
@@ -128,7 +128,14 @@ export default {
       // 使得选择器 默认显示
       this.currentDate = new Date(this.userprofile.birthday)
     },
-    save () {
+    async save () {
+      const obj = {
+        name: this.userprofile.name,
+        gender: this.userprofile.gender,
+        birthday: this.userprofile.birthday
+      }
+      const res = await apiUserSaveProfile(obj)
+      console.log(res)
       // 提示信息
       this.$toast.success('保存成功')
     }
