@@ -4,12 +4,12 @@
     <van-nav-bar fixed left-arrow @click-left="$router.back()" title="小智同学"></van-nav-bar>
     <div class="chat-list">
       <div class="chat-item left">
-        <van-image fit="cover" round src="https://img.yzcdn.cn/vant/cat.jpeg" />
+        <van-image fit="cover" round :src="XZImg" />
         <div class="chat-pao">干啥呢，河蟹</div>
       </div>
       <div class="chat-item right">
         <div class="chat-pao">没看正忙，挖沙呢</div>
-        <van-image  fit="cover" round src="https://img.yzcdn.cn/vant/cat.jpeg" />
+        <van-image  fit="cover" round :src="userInfo.photo" />
       </div>
     </div>
     <div class="reply-container van-hairline--top">
@@ -21,12 +21,26 @@
 </template>
 
 <script>
+// 获得用户信息
+import { apiUserInfo } from '@/api/user'
+import XZImg from '@/assets/imgs/xz.jpg'
 export default {
   name: 'user-chat',
   data () {
     return {
+      userInfo: null, // 用户信息
+      XZImg, // 小智头像，简易成员赋值，完整体现为 XZImg:XZImg
       content: '', // 即将发表的聊天内容
       isloading: false // 是否正在提交留言
+    }
+  },
+  created () {
+    this.getUserInfo()
+  },
+  methods: {
+    // 获得用户信息
+    async getUserInfo () {
+      this.userInfo = await apiUserInfo()
     }
   }
 }
