@@ -2,7 +2,12 @@
   <div class="container">
     <van-nav-bar fixed title="搜索结果" left-arrow @click-left="$router.back()" />
     <van-list v-model="loading" :finished="finished" finished-text="没有更多了" @load="onLoad">
-      <van-cell v-for="item in searchList" :key="item.art_id.toString()" :title="item.title" />
+      <van-cell
+      v-for="item in searchList"
+      :key="item.art_id.toString()"
+      :title="item.title"
+      @click="$router.push('/article/'+item.art_id.toString())"
+       />
     </van-list>
   </div>
 </template>

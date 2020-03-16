@@ -37,7 +37,12 @@
       </van-cell>
       <!-- 历史联想项目数据展示
       v-for="(item,index) in $store.state.user.token?historyList:suggestHistories"-->
-      <van-cell :title="item" v-for="(item,index) in historyList" :key="index">
+      <van-cell
+        :title="item"
+        v-for="(item,index) in historyList"
+        :key="index"
+        @click="$router.push('/search/result/'+item)"
+      >
         <van-icon
           v-show="isDeleteData"
           slot="right-icon"
@@ -51,7 +56,11 @@
 </template>
 
 <script>
-import { apiSearchSuggestion, apiSearchHistory, apiSearchHistoryDel } from '@/api/search.js'
+import {
+  apiSearchSuggestion,
+  apiSearchHistory,
+  apiSearchHistoryDel
+} from '@/api/search.js'
 // 设置关键字历史记录的localStorage的key的名称，方便后续使用
 const key = 'suggest-histories'
 export default {
@@ -150,4 +159,8 @@ export default {
 }
 </script>
 
-<style scoped lang='less'></style>
+<style scoped lang='less'>
+.container{
+  padding: 0;
+}
+</style>

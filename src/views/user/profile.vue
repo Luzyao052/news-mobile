@@ -134,8 +134,8 @@ export default {
         gender: this.userprofile.gender,
         birthday: this.userprofile.birthday
       }
-      const res = await apiUserSaveProfile(obj)
-      console.log(res)
+      await apiUserSaveProfile(obj)
+      // console.log(res)
       // 提示信息
       this.$toast.success('保存成功')
     }
