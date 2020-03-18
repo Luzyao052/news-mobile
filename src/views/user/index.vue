@@ -51,7 +51,7 @@
       <van-cell icon="edit" title="编辑资料" to="/user/profile" is-link/>
       <van-cell icon="chat-o" title="小智同学" to="/user/chat" is-link/>
       <van-cell icon="setting-o" title="系统设置" is-link/>
-      <van-cell icon="warning-o" title="退出登录" to="/login" is-link/>
+      <van-cell icon="warning-o" title="退出登录" @click="logout()" is-link/>
     </van-cell-group>
   </div>
 </template>
@@ -74,6 +74,22 @@ export default {
     this.getUserInfo()
   },
   methods: {
+    // 退出系统
+    logout () {
+      // 确认框
+      this.$dialog.confirm({
+        // title: '标题',
+        message: '确认要退出系统么？'
+      }).then(() => {
+        // 单击确定按钮后处理
+        // 清除vuex用户数据
+        this.$store.commit('clearUser')
+        // 跳转到登录页面
+        this.$router.push('/login')
+      }).catch(() => {
+        // 单击取消按钮的逻辑
+      })
+    },
     // 获取用户信息
     async getUserInfo () {
       const res = await apiUserInfo()
