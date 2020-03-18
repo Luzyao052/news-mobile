@@ -1,6 +1,7 @@
 <template>
   <!-- div的作用是给瀑布流区域设置“垂直滚动条”，使得可以进行上拉操作 -->
-  <div class="scroll-wrapper">
+  <!-- 给文章列表外部div设置 滚动事件@scroll  和  ref属性(后边需要调用该元素) -->
+  <div class="scroll-wrapper" @scroll="remember()" ref="myarticle">
     <!-- 下拉包围上拉 -->
     <van-pull-refresh
       v-model="isLoading"
@@ -69,6 +70,7 @@ export default {
   },
   data () {
     return {
+      nowTop: 0, // 滚动条滚动的位置
       successText: '', // 下拉动作完成后的动画提示内容
       nowArticleID: '', // 1. 不感兴趣文章id
       showDialog: false, // 控制子组件弹出框是否显示
@@ -90,7 +92,19 @@ export default {
   created () {
     this.getArticleList() // 文章
   },
+  // keep-alive 组件激活自动调用的生命周期钩子方法
+  activated () {
+  // 组件被激活，设置滚动条卷起高度为离开时候的位置
+    if (this.nowTop) {
+      this.$refs.myarticle.scrollTop = this.nowTop
+    }
+  },
   methods: {
+    // // 获得滚动条卷起的高度，并赋予给nowTop
+    remember () {
+      // console.dir(this.$refs.myarticle)
+      this.nowTop = this.$refs.myarticle.scrollTop
+    },
     // 处理不喜欢的文章
     handleDislikeSuccess () {
       // 让 nowArticleID 文章在列表中消失

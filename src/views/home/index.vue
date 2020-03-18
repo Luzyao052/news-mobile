@@ -25,7 +25,7 @@ import { apiUserChannel } from '@/api/channel.js'
 // 对com-article.vue 做导入、注册、使用
 import ComArticle from './components/com-article.vue'
 export default {
-  name: 'home-index',
+  name: 'homeIndex',
   components: {
     ComArticle,
     ComChannel
@@ -48,6 +48,17 @@ export default {
       this.channelList = res.channels
     }
   }
+  // // 如果跳转的是详情页，缓存，否则不缓存
+  // beforeRouteLeave (to, from, next) {
+  //   // console.log(to.name)
+  //   if (to.name === 'articleContent') {
+  //     this.$store.commit('addCachePage', 'homeIndex')
+  //   } else {
+  //     this.$store.commit('removeCachePage', 'homeIndex')
+  //   }
+  //   // 放行
+  //   next()
+  // }
 }
 </script>
 

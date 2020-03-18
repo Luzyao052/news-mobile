@@ -60,6 +60,10 @@
 // 用户基本信息api
 import { apiUserInfo } from '@/api/user.js'
 export default {
+  deactivated () {
+    // console.log(1)
+    this.$destroy()
+  },
   name: 'user-index',
   data () {
     return {

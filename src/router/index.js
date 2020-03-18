@@ -41,6 +41,7 @@ const routes = [
   },
   {
     path: '/article/:aid',
+    name: 'articleContent',
     component: () => import('@/views/article/index.vue') // 文章详情
   },
   {

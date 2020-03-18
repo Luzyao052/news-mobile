@@ -7,12 +7,14 @@
     @click-right：右侧文字单击后发生的事件
     fixed：固定定位，定位到页面头部，是样式体现(postion:fixed;top:0;left:0;)
     -->
-    <van-nav-bar fixed title="黑马头条" right-text="搜索"
+    <van-nav-bar fixed title="头条" right-text="搜索"
       @click-right="$router.push('/search')" v-if="$route.path!=='/user'"/>
 
     <div class="my-wrapper" :class="{noTop:$route.path==='/user'}">
       <!--路由占位符，用于显示 home、question、video、user的组件的-->
+      <keep-alive>
       <router-view></router-view>
+      </keep-alive>
     </div>
 
     <!-- 公共脚步
@@ -35,6 +37,7 @@
 
 <script>
 export default {
+  name: 'layOut',
   created () {
     // console.log(this.$route) --> 可以打印出来path
   }

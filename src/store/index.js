@@ -8,7 +8,8 @@ const USER_KEY = 'news-mobile'
 export default new Vuex.Store({
   state: {
     // 通过 || 设定，如果localStorage没有数据，就返回{}空对象
-    user: JSON.parse(localStorage.getItem(USER_KEY) || '{}')
+    user: JSON.parse(localStorage.getItem(USER_KEY) || '{}'),
+    cachePage: ['layOut']
   },
   mutations: {
     // 修改/更新用户信息
@@ -25,6 +26,21 @@ export default new Vuex.Store({
       state.user = {}
       // 2. localStorage做持久清除
       localStorage.removeItem(USER_KEY)
+    },
+
+    // 添加缓存页面
+    addCachePage (state, name) {
+      if (!state.cachePage.includes(name)) {
+        state.cachePage.push(name)
+      }
+    },
+
+    // 移除缓存页面
+    removeCachePage (state, name) {
+      const index = state.cachePage.indexOf(name)
+      if (index !== -1) {
+        state.cachePage.splice(index)
+      }
     }
   },
   actions: {
