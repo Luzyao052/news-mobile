@@ -17,6 +17,8 @@
           type="info"
         >{{article.is_followed?'取消关注':'+ 关注'}}</van-button>
       </div>
+      <!-- 模拟token -->
+      <van-button @click="$store.commit('clearToken')">模拟删除token</van-button>
       <!--  -->
       <div class="content">
         <p v-html="article.content"></p>
